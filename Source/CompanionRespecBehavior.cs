@@ -35,8 +35,13 @@ namespace CompanionRespec
         
         private void OnCompanionAdded(Hero hero)
         {
-            if (hero != null && hero.IsWanderer && !this.ScatteredCompanions.ContainsKey(hero));
+            if (hero != null && hero.IsWanderer);
             {
+                if (this.FiredCompanions.ContainsKey(hero) || this.ScatteredCompanions.ContainsKey(hero))
+                {
+                    InformationManager.DisplayMessage(new InformationMessage($"{hero.Name} cannot be demolished again."));
+                    return;
+                }
                 this.RespecHero(hero);
             }
         }
@@ -62,14 +67,11 @@ namespace CompanionRespec
 
         private void RespecHero(Hero hero)
         {
-            if (this.FiredCompanions.ContainsKey(hero))
-            {
-                InformationManager.DisplayMessage(new InformationMessage($"{hero.Name} cannot be demolished again."));
-                return;
-            }
-
             InformationManager.DisplayMessage(new InformationMessage($"{hero.Name} will be demolished."));
             
+            InformationManager.DisplayMessage(new InformationMessage($"Clearing Perks..."));
+            hero.ClearPerks();
+
             int statpoints = hero.HeroDeveloper.UnspentAttributePoints;
             int focuspoints = hero.HeroDeveloper.UnspentFocusPoints;
             int focus_to_add = 0;
@@ -114,8 +116,8 @@ namespace CompanionRespec
 
             
             InformationManager.DisplayMessage(new InformationMessage($"Unspent: {hero.HeroDeveloper.UnspentAttributePoints} stat | {hero.HeroDeveloper.UnspentFocusPoints} focus"));
-
             
+
 
         }
 
